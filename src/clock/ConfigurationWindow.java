@@ -1,3 +1,5 @@
+package clock;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
@@ -11,6 +13,8 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 public class ConfigurationWindow extends JDialog {
+	private static final long serialVersionUID = 1L;
+
 	private void chooseLookAndFeel() {
 		try {
 			boolean found = false;
@@ -30,7 +34,7 @@ public class ConfigurationWindow extends JDialog {
 		}
 	}
 
-	ConfigurationWindow(final Clock clock) {
+	ConfigurationWindow(final ClockWindow clock) {
 		super(clock);
 		chooseLookAndFeel();
 		setTitle("Properties");
@@ -50,13 +54,12 @@ public class ConfigurationWindow extends JDialog {
 		setForeground.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ColorPicker picker = new ColorPicker(getForeground(),
-						new ColorSetHandler() {
-							@Override
-							public void set(Color newColor) {
-								clock.setDisplayForeground(newColor);
-							}
-						});
+				new ColorPickerWindow(getForeground(), new ColorSetHandler() {
+					@Override
+					public void set(Color newColor) {
+						clock.setDisplayForeground(newColor);
+					}
+				});
 			}
 		});
 		add(setForeground, c);
