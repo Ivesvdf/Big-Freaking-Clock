@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -27,9 +28,12 @@ public class ClockWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private Color foreground;
 	private Color background;
+	private boolean wasAlwaysOnTop = false;
 
 	private final DisplayComponent displayComponent = new DisplayComponent();
 	private JFrame fullscreenFrame;
+	private final JCheckBoxMenuItem alwaysOnTopItem = new JCheckBoxMenuItem(
+			"Always on Top", false);
 
 	public Color getDisplayForeground() {
 		return foreground;
@@ -82,6 +86,14 @@ public class ClockWindow extends JFrame {
 			}
 		});
 		viewMenu.add(fullscreenItem);
+
+		alwaysOnTopItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setAlwaysOnTop(alwaysOnTopItem.getState());
+			}
+		});
+		viewMenu.add(alwaysOnTopItem);
 
 		setJMenuBar(menuBar);
 		menuBar.setVisible(false);
@@ -179,11 +191,18 @@ public class ClockWindow extends JFrame {
 			repaint();
 		}
 
+		if (wasAlwaysOnTop) {
+			alwaysOnTopItem.setState(true);
+			setAlwaysOnTop(true);
+		}
+
 	}
 
 	private void goFullscreen() {
 		GraphicsDevice currentDevice = getGraphicsConfiguration().getDevice();
-		Rectangle bounds = getGraphicsConfiguration().getBounds();
+		wasAlwaysOnTop = alwaysOnTopItem.getState();
+		alwaysOnTopItem.setState(false);
+		setAlwaysOnTop(false);
 
 		if (currentDevice.isFullScreenSupported()) {
 			fullscreenFrame = new JFrame();
@@ -192,6 +211,7 @@ public class ClockWindow extends JFrame {
 			fullscreenFrame.setUndecorated(true);
 			fullscreenFrame.setResizable(false);
 
+			Rectangle bounds = getGraphicsConfiguration().getBounds();
 			fullscreenFrame.setBounds(bounds);
 
 			fullscreenFrame.setLayout(new BorderLayout());
