@@ -22,6 +22,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.WindowConstants;
 
 public class ClockWindow extends JFrame {
@@ -53,9 +55,29 @@ public class ClockWindow extends JFrame {
 		displayComponent.setDisplayBackground(background);
 	}
 
+	private void chooseLookAndFeel() {
+		try {
+			boolean found = false;
+			for (final LookAndFeelInfo info : UIManager
+					.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				UIManager.setLookAndFeel(UIManager
+						.getSystemLookAndFeelClassName());
+			}
+		} catch (final Exception e) {
+		}
+	}
+
 	public ClockWindow() {
 		super("Big Fracking Clock");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		chooseLookAndFeel();
 
 		setLayout(new BorderLayout());
 
