@@ -53,6 +53,17 @@ public class ConfigurationWindow extends JDialog {
 		c.insets = new Insets(10, 10, 10, 10);
 
 		JButton setBackground = new JButton("Set Background Color");
+		setBackground.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ColorPickerWindow(getBackground(), new ColorSetHandler() {
+					@Override
+					public void set(Color newColor) {
+						clock.setDisplayBackground(newColor);
+					}
+				});
+			}
+		});
 		add(setBackground, c);
 
 		pack();
