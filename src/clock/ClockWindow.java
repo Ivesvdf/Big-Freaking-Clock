@@ -83,19 +83,35 @@ public class ClockWindow extends JFrame {
 
 		final JMenuBar menuBar = new JMenuBar();
 
-		JMenu fileMenu = new JMenu("File");
-		menuBar.add(fileMenu);
+		JMenu configureMenu = new JMenu("Configure");
+		menuBar.add(configureMenu);
 
-		JMenuItem configureItem = new JMenuItem("Configure");
-		configureItem.addActionListener(new ActionListener() {
+		JMenuItem fgColorItem = new JMenuItem("Foreground Color");
+		fgColorItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ConfigurationWindow configWindow = new ConfigurationWindow(
-						ClockWindow.this);
-				configWindow.setVisible(true);
+				new ColorPickerWindow(getForeground(), new ColorSetHandler() {
+					@Override
+					public void set(Color newColor) {
+						setDisplayForeground(newColor);
+					}
+				});
 			}
 		});
-		fileMenu.add(configureItem);
+		configureMenu.add(fgColorItem);
+		JMenuItem bgColorItem = new JMenuItem("Background Color");
+		bgColorItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ColorPickerWindow(getBackground(), new ColorSetHandler() {
+					@Override
+					public void set(Color newColor) {
+						setDisplayBackground(newColor);
+					}
+				});
+			}
+		});
+		configureMenu.add(bgColorItem);
 
 		JMenu viewMenu = new JMenu("View");
 		menuBar.add(viewMenu);
