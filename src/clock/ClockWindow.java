@@ -229,6 +229,9 @@ public class ClockWindow extends JFrame {
 	}
 
 	private void load() {
+		setDisplayForeground(Color.white);
+		setDisplayBackground(Color.black);
+
 		try {
 			Properties prop = new Properties();
 
@@ -256,9 +259,6 @@ public class ClockWindow extends JFrame {
 		} catch (Exception e) {
 			System.err.println("Could not load config" + e.getMessage());
 			e.printStackTrace();
-
-			setDisplayForeground(Color.white);
-			setDisplayBackground(Color.black);
 		}
 	}
 
