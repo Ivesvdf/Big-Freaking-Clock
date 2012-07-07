@@ -10,8 +10,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
@@ -27,6 +32,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.WindowConstants;
 
 public class ClockWindow extends JFrame {
+	private static final String CONFIG_FILENAME = "BFC.properties";
 	private static final long serialVersionUID = 1L;
 	private Color foreground;
 	private Color background;
@@ -94,7 +100,9 @@ public class ClockWindow extends JFrame {
 					@Override
 					public void set(Color newColor) {
 						setDisplayForeground(newColor);
+						save();
 					}
+
 				});
 			}
 		});
@@ -107,6 +115,7 @@ public class ClockWindow extends JFrame {
 					@Override
 					public void set(Color newColor) {
 						setDisplayBackground(newColor);
+						save();
 					}
 				});
 			}
@@ -214,7 +223,66 @@ public class ClockWindow extends JFrame {
 			}
 		});
 
+		load();
+
 		setSize(600, 400);
+	}
+
+	private void load() {
+		try {
+			Properties prop = new Properties();
+
+			if (!(new File(CONFIG_FILENAME).exists())) {
+				return;
+			}
+
+			try {
+				FileInputStream fileInputStream = new FileInputStream(
+						CONFIG_FILENAME);
+				prop.load(fileInputStream);
+
+				setDisplayForeground(Color.decode(prop.getProperty(
+						"foreground", "#FFFFFF")));
+				setDisplayBackground(Color.decode(prop.getProperty(
+						"background", "#000000")));
+
+				// save properties to project root folder
+				prop.store(new FileOutputStream(CONFIG_FILENAME), null);
+
+				System.out.println(prop);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		} catch (Exception e) {
+			System.err.println("Could not load config" + e.getMessage());
+			e.printStackTrace();
+
+			setDisplayForeground(Color.white);
+			setDisplayBackground(Color.black);
+		}
+	}
+
+	private String encodeColor(Color c) {
+		String rgb = Integer.toHexString(c.getRGB());
+		rgb = rgb.substring(2, rgb.length());
+		return "#" + rgb;
+	}
+
+	private void save() {
+		Properties prop = new Properties();
+
+		try {
+			// set the properties value
+			prop.setProperty("foreground", encodeColor(getDisplayForeground()));
+			prop.setProperty("background", encodeColor(getDisplayBackground()));
+
+			// save properties to project root folder
+			prop.store(new FileOutputStream(CONFIG_FILENAME), null);
+
+			System.out.println(prop);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private void backFromFullscreen() {
